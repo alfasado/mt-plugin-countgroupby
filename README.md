@@ -16,6 +16,7 @@ A container tag which iterates counting groups of objects.
 
     model      : Model of object. The default value is "entry".
     column     : Column names of object. You can specify only one column.
+                 The default value is "title".
     sort_by    : Defines the data to sort. "count" or "value".
                  The default value is "count".
     sort_order : Accepted values are "ascend" and "descend".
@@ -43,4 +44,3 @@ The number of objects.
 Output the object's column value.
 
 ---------------------------------------
-
