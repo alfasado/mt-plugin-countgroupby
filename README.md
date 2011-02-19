@@ -27,7 +27,7 @@ A container tag which iterates counting groups of objects.
     <MTCountGroupBy model="entry" column="keywords" sort_by="count" sort_order="descend">
         <mt:if name="__first__"><ul></mt:if>
             <li>(<$mt:CountGroupCount$>)<$mt:CountGroupValue escape="html"$></li>
-        <mt:if name="__last__"><ul></mt:if>
+        <mt:if name="__last__"></ul></mt:if>
     </MTCountGroupBy>
 
 ---------------------------------------
