@@ -1,29 +1,45 @@
 package CountGroupBy::Plugin;
 use strict;
-use Encode;
 
-# <MTCountGroupBy model="entry" column="keywords" sort_by="count" sort_order="descend" glue="<br />">
+use CountGroupBy::Util qw( include_exclude_blogs utf8_on );
+
+# <MTCountGroupBy model="entry" column="keywords" sort_by="count" sort_order="descend" glue="<br />" not_null="1">
 # (<$mt:var name="__group_count__"$>)<$mt:var name="__group_value__"$>
 # (<$mt:CountGroupCount$>)<$mt:CountGroupValue escape="html"$>
 # </MTCountGroupBy>
 
 sub _hdlr_count_group_by {
     my ( $ctx, $args, $cond ) = @_;
-    my $blog = $ctx->stash( 'blog' );
     my $model = $args->{ model } || 'entry';
     $model = lc( $model );
     if ( $model eq 'author' ) {
         return '';
     }
     my $column = $args->{ column } || 'title';
-    my $terms = { blog_id => $blog->id };
+    my $terms;
+    if ( ( $model ne 'blog' ) && ( $model ne 'website' ) ) {
+        my @blog_ids = include_exclude_blogs( $ctx, $args );
+        if ( scalar @blog_ids ) {
+            if ( ( scalar @blog_ids ) == 1 ) {
+                if ( defined $blog_ids[ 0 ] ) {
+                    $terms->{ blog_id } = \@blog_ids;
+                }
+            } else {
+                $terms->{ blog_id } = \@blog_ids;
+            }
+        }
+    }
+    if ( ( $model eq 'entry' ) || ( $model eq 'page' ) ) {
+        $terms->{ status } = 2;
+    }
     my $sort = $args->{ sort_by } || 'count';
     my $direction = $args->{ sort_order } || 'descend';
     my $limit = $args->{ lastn } || '9999';
-    my $offset = $args->{ offset };
-    my $params;
+    my $not_null = $args->{ not_null };
+    if ( $not_null ) {
+        $terms->{ $column } = { not => '' };
+    }
     my $iter = MT->model( $model )->count_group_by( $terms, { group => [ $column ] } );
-    my $res = '';
     my $result;
     my $last = 0;
     while ( my ( $count, $value ) = $iter->() ) {
@@ -71,14 +87,6 @@ sub _hdlr_count_group_value {
 sub _hdlr_count_group_count {
     my ( $ctx, $args, $cond ) = @_;
     return $ctx->stash( 'group_count' );
-}
-
-sub utf8_on {
-    my $text = shift;
-    if (! Encode::is_utf8( $text ) ) {
-        Encode::_utf8_on( $text );
-    }
-    return $text;
 }
 
 1;

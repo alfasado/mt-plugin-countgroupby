@@ -1,8 +1,8 @@
 name: CountGroupBy
 id:   countgroupby
 key:  CountGroupBy
-version: 1.0
-author_link: https://github.com/alfasado
+version: 1.01
+author_link: http://alfasado.net/
 author_name: Alfasado Inc.
 l10n_class: CountGroupBy::L10N
 description: <__trans phrase="Counting groups of objects.">
@@ -13,4 +13,3 @@ tags:
         CountGroupValue: $countgroupby::CountGroupBy::Plugin::_hdlr_count_group_value
         CountGroupCount: $countgroupby::CountGroupBy::Plugin::_hdlr_count_group_count
 
-# TODO - PHP
