@@ -20,6 +20,9 @@ function smarty_block_mtcountgroupby ( $args, $content, &$ctx, &$repeat ) {
             $table = 'entry';
             $status_expression = " ( entry_status = 2 ) AND";
         }
+        if ( ( $model == 'blog' ) || ( $model == 'website' ) ) {
+            $table = 'blog';
+        }
         $sql = "SELECT COUNT(*), {$table}_{$column} FROM mt_{$table} WHERE {$status_expression} ";
         if ( $not_null ) {
             $sql .= " ( {$table}_{$column} != '' ) ";
@@ -27,7 +30,10 @@ function smarty_block_mtcountgroupby ( $args, $content, &$ctx, &$repeat ) {
         if ( ( $model == 'entry' ) || ( $model == 'page' ) ||
             ( $model == 'blog' ) || ( $model == 'website' ) ||
             ( $model == 'category' ) || ( $model == 'folder' ) ) {
-            $sql .= " AND ( {$table}_class = '$model' ) ";
+            if ( $not_null ) {
+                $sql .= " AND ";
+            }
+            $sql .= " ( {$table}_class = '$model' ) ";
         }
         $include_exclude_blogs = __countgroupby_blogs( $ctx, $args );
         if ( ( $model != 'blog' ) && ( $model != 'website' ) ) {
